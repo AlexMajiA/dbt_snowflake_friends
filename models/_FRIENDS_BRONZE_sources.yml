@@ -1,0 +1,82 @@
+
+sources:
+  - name: raw
+    tables:
+      - name: raw_dialogs
+        columns:
+          - name: season
+            data_type: varchar
+          - name: episode
+            data_type: varchar
+          - name: scene
+            data_type: varchar
+          - name: utterance
+            data_type: varchar
+          - name: speaker
+            data_type: varchar
+          - name: text
+            data_type: varchar
+          - name: tokens
+            data_type: varchar
+
+      - name: raw_emotions
+        columns:
+          - name: season
+            data_type: varchar
+          - name: episode
+            data_type: varchar
+          - name: scene
+            data_type: varchar
+          - name: utterance
+            data_type: varchar
+          - name: emotion
+            data_type: varchar
+          - name: speaker
+            data_type: varchar
+
+      - name: raw_episode_meta
+        columns:
+          - name: year_of_prod
+            data_type: varchar
+          - name: season
+            data_type: varchar
+          - name: episode_number
+            data_type: varchar
+          - name: episode_title
+            data_type: varchar
+          - name: duration
+            data_type: varchar
+          - name: summary
+            data_type: varchar
+          - name: director
+            data_type: varchar
+          - name: stars
+            data_type: varchar
+          - name: votes
+            data_type: varchar
+          - name: us_views_millions
+            data_type: varchar
+
+      - name: raw_episode_rating
+        columns:
+          - name: epseason
+            data_type: varchar
+          - name: epnum
+            data_type: varchar
+          - name: epname
+            data_type: varchar
+          - name: rating
+            data_type: varchar
+          - name: dynamics
+            data_type: varchar
+
+      - name: raw_interactions
+        columns:
+          - name: season
+            data_type: varchar
+          - name: episode
+            data_type: varchar
+          - name: character1
+            data_type: varchar
+          - name: character2
+            data_type: varchar
