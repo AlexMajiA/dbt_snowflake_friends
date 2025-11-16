@@ -12,13 +12,18 @@ WITH episode_rating_source AS (
 
 raw_episode_rating_cleaned AS (
     SELECT
-    EPSEASON ,
-    EPNUM ,
-    EPNAME ,
-    RATING ,
-    DYNAMICS 
-    
+        cast(EPSEASON as INTEGER) as EPSEASON,
+        cast(EPNUM as INTEGER) as EPNUM,
+        trim(EPNAME) as EPNAME,
+        cast(NULLIF(RATING, '') as FLOAT) as RATING ,
+        cast(DYNAMICS as INTEGER) as DYNAMICS, 
+        
+        CURRENT_TIMESTAMP() as processed_at
+
     FROM episode_rating_source
+        WHERE EPSEASON IS NOT NULL
+            AND EPNUM IS NOT NULL
+
     )
 
 SELECT * FROM raw_episode_rating_cleaned
