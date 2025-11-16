@@ -80,7 +80,7 @@ sources:
             tests:
               - not_null
               - accepted_values:
-                  values: ["Mad","Neutral","Joyful","Scared","Sad","Powerful","Peaceful"]
+                  values: ["Mad","Neutral","Joyful","Scared","Sad","Powerful","Peaceful"] #"Enfadado" "Neutral" "Alegre" "Asustado" "Triste" "Poderoso" "Pacífico"
           - name: speaker
             data_type: varchar
             description: "Personaje asociado a la emoción."

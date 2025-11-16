@@ -7,7 +7,7 @@
 
 WITH episode_rating_source AS (
     SELECT * 
-    FROM {{ source('raw', 'raw_episode_meta') }}
+    FROM {{ source('raw', 'raw_episode_rating') }}
     ),
 
 raw_episode_rating_cleaned AS (
