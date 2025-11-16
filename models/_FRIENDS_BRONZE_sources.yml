@@ -1,82 +1,173 @@
-
 sources:
   - name: raw
+    description: "Schema/raw zone: cargas originales tal cual llegan desde los csv/etl. No modificar datos aquí; todas las transformaciones en models/staging."
     tables:
       - name: raw_dialogs
+        description: "Diálogos por declaración. Nivel más fino: season, episode, scene, utterance, speaker, text, tokens."
         columns:
           - name: season
             data_type: varchar
+            description: "Número de temporada."
+            data_tests:
+              - not_null
           - name: episode
             data_type: varchar
+            description: "Número de episodio dentro de la temporada."
+            data_tests:
+              - not_null
           - name: scene
             data_type: varchar
-          - name: utterance
+            description: "Identificador de escena dentro del episodio."
+            data_tests:
+              - not_null
+          - name: utterance #declaración
             data_type: varchar
+            description: "Número/identificador de utterance dentro de la escena."
+            data_tests:
+              - not_null
           - name: speaker
             data_type: varchar
+            description: "Nombre del personaje que habla."
+            data_tests:
+              - not_null
           - name: text
             data_type: varchar
+            description: "Texto completo del utterance (puede incluir comillas y puntuación)"
           - name: tokens
             data_type: varchar
+            description: "Representación tokenizada (string/JSON) del utterance."
+
 
       - name: raw_emotions
+        description: "Etiqueta de emoción por utterance; puede haber múltiples filas por utterance si la fuente duplica o hay versiones."
         columns:
           - name: season
             data_type: varchar
+            description: "Temporada."
+            data_tests:
+              - not_null
           - name: episode
             data_type: varchar
+            description: "Episodio."
+            data_tests:
+              - not_null
           - name: scene
             data_type: varchar
+            description: "Escena."
+            data_tests:
+              - not_null
           - name: utterance
             data_type: varchar
+            description: "Utterance id."
+            data_tests:
+              - not_null
           - name: emotion
             data_type: varchar
+            description: "Etiqueta de emoción asignada al utterance."
+            tests:
+              - not_null
+              - accepted_values:
+                  values: ["Mad","Neutral","Joyful","Scared","Sad","Powerful","Peaceful"]
           - name: speaker
             data_type: varchar
+            description: "Personaje asociado a la emoción."
+            data_tests:
+              - not_null
+
 
       - name: raw_episode_meta
+        description: "Metadata rica del episodio: título, duración, resumen, director, estrellas, votos y vistas." #Candidato para snapshot SCD2.
         columns:
           - name: year_of_prod
             data_type: varchar
+            description: "Año de producción."
+            tests:
+              - not_null
           - name: season
             data_type: varchar
+            description: "Número de temporada."
+            tests:
+              - not_null
           - name: episode_number
             data_type: varchar
+            description: "Número de episodio."
+            tests:
+              - not_null
           - name: episode_title
             data_type: varchar
+            description: "Título del episodio."
+            tests:
+              - not_null
           - name: duration
             data_type: varchar
+            description: "Duración en minutos."
+            tests:
+              - not_null
           - name: summary
             data_type: varchar
+            description: "Sinopsis del episodio."
           - name: director
             data_type: varchar
+            description: "Director del episodio."
+            tests:
+              - not_null
           - name: stars
             data_type: varchar
+            description: "Campo con las estrellas/actores (formato libre)."
           - name: votes
             data_type: varchar
+            description: "Número de votos."
           - name: us_views_millions
             data_type: varchar
+            description: "Numero de visualizaciones en EEUU (millones)"
+
 
       - name: raw_episode_rating
+        description: "Registros de rating y métricas auxiliares." #(puede contener múltiples filas por episodio con distintas 'dynamics')
         columns:
           - name: epseason
             data_type: varchar
+            description: "Temporada (coincide con season)."
+            tests:
+              - not_null
           - name: epnum
             data_type: varchar
+            description: "Número de episodio (coincide con episode_number)."
+            tests:
+              - not_null
           - name: epname
             data_type: varchar
+            description: "Nombre del episodio (puede repetirse si hay filas por dinámica)."
+            tests:
+              - not_null
           - name: rating
             data_type: varchar
+            description: "Rating IMDB (o similar)."
           - name: dynamics
             data_type: varchar
+            description: "Métrica auxiliar (valores numéricos o categorías), usada para demostrar cambios/variaciones."
+
 
       - name: raw_interactions
+        description: "Interacciones par a par entre personajes dentro de un episodio (una fila por interacción detectada)."
         columns:
           - name: season
             data_type: varchar
+            description: "Temporada."
+            tests:
+              - not_null
           - name: episode
             data_type: varchar
+            description: "Episodio."
+            tests:
+              - not_null
           - name: character1
             data_type: varchar
+            description: "Personaje A en la pareja de interacción."
+            tests:
+              - not_null
           - name: character2
             data_type: varchar
+            description: "Personaje B en la pareja de interacción."
+            tests:
+              - not_null
