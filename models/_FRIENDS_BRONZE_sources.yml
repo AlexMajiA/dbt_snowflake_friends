@@ -1,6 +1,19 @@
 sources:
   - name: raw
     description: "Schema/raw zone: cargas originales tal cual llegan desde los csv/etl. No modificar datos aquí; todas las transformaciones en models/staging."
+    schema: RAW # this is the schema our raw data lives in
+    database: FRIENDS_BRONZE # this is the name of our database
+
+    quoting:
+      database: false
+      schema: false
+      identifier: false
+
+    freshness:
+      warn_after: { count: 500, period: hour }
+      error_after: { count: 500, period: day }
+
+
     tables:
       - name: raw_dialogs
         description: "Diálogos por declaración. Nivel más fino: season, episode, scene, utterance, speaker, text, tokens."
