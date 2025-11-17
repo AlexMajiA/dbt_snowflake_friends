@@ -1,6 +1,19 @@
 sources:
   - name: raw
     description: "Schema/raw zone: cargas originales tal cual llegan desde los csv/etl. No modificar datos aquí; todas las transformaciones en models/staging."
+    schema: RAW # this is the schema our raw data lives in
+    database: FRIENDS_BRONZE # this is the name of our database
+
+    quoting:
+      database: false
+      schema: false
+      identifier: false
+
+    freshness:
+      warn_after: { count: 500, period: hour }
+      error_after: { count: 500, period: day }
+
+
     tables:
       - name: raw_dialogs
         description: "Diálogos por declaración. Nivel más fino: season, episode, scene, utterance, speaker, text, tokens."
@@ -8,27 +21,27 @@ sources:
           - name: season
             data_type: varchar
             description: "Número de temporada."
-            data_tests:
+            tests:
               - not_null
           - name: episode
             data_type: varchar
             description: "Número de episodio dentro de la temporada."
-            data_tests:
+            tests:
               - not_null
           - name: scene
             data_type: varchar
             description: "Identificador de escena dentro del episodio."
-            data_tests:
+            tests:
               - not_null
           - name: utterance #declaración
             data_type: varchar
             description: "Número/identificador de utterance dentro de la escena."
-            data_tests:
+            tests:
               - not_null
           - name: speaker
             data_type: varchar
             description: "Nombre del personaje que habla."
-            data_tests:
+            tests:
               - not_null
           - name: text
             data_type: varchar
@@ -44,22 +57,22 @@ sources:
           - name: season
             data_type: varchar
             description: "Temporada."
-            data_tests:
+            tests:
               - not_null
           - name: episode
             data_type: varchar
             description: "Episodio."
-            data_tests:
+            tests:
               - not_null
           - name: scene
             data_type: varchar
             description: "Escena."
-            data_tests:
+            tests:
               - not_null
           - name: utterance
             data_type: varchar
             description: "Utterance id."
-            data_tests:
+            tests:
               - not_null
           - name: emotion
             data_type: varchar
@@ -67,11 +80,11 @@ sources:
             tests:
               - not_null
               - accepted_values:
-                  values: ["Mad","Neutral","Joyful","Scared","Sad","Powerful","Peaceful"]
+                  values: ["Mad","Neutral","Joyful","Scared","Sad","Powerful","Peaceful"] #"Enfadado" "Neutral" "Alegre" "Asustado" "Triste" "Poderoso" "Pacífico"
           - name: speaker
             data_type: varchar
             description: "Personaje asociado a la emoción."
-            data_tests:
+            tests:
               - not_null
 
 
@@ -123,7 +136,7 @@ sources:
 
 
       - name: raw_episode_rating
-        description: "Registros de rating y métricas auxiliares." #(puede contener múltiples filas por episodio con distintas 'dynamics')
+        description: "Registros de rating y métricas auxiliares." #(Contiene múltiples filas por episodio con distintas 'dynamics')
         columns:
           - name: epseason
             data_type: varchar
@@ -143,6 +156,7 @@ sources:
           - name: rating
             data_type: varchar
             description: "Rating IMDB (o similar)."
+
           - name: dynamics
             data_type: varchar
             description: "Métrica auxiliar (valores numéricos o categorías), usada para demostrar cambios/variaciones."
@@ -151,23 +165,53 @@ sources:
       - name: raw_interactions
         description: "Interacciones par a par entre personajes dentro de un episodio (una fila por interacción detectada)."
         columns:
+
           - name: season
             data_type: varchar
             description: "Temporada."
             tests:
               - not_null
+
           - name: episode
             data_type: varchar
             description: "Episodio."
             tests:
               - not_null
+
           - name: character1
             data_type: varchar
             description: "Personaje A en la pareja de interacción."
             tests:
               - not_null
+
           - name: character2
             data_type: varchar
             description: "Personaje B en la pareja de interacción."
             tests:
               - not_null
+
+seeds:
+  - name: dim_dynamics_mapping
+    description: "Mapping entre códigos de dinámica y personajes involucrados"
+    columns:
+      - name: dynamics_code
+        tests:
+          - unique
+          - not_null
+
+      - name: dynamics_name
+        tests:
+          - not_null
+
+      - name: characters_involved
+        tests:
+          - not_null
+
+      - name: character_count
+        tests:
+          - not_null
+
+      - name: category
+        tests:
+          - not_null
+

@@ -1,0 +1,53 @@
+dynamics_code,dynamics_name,characters_involved,character_count,category
+1,Chandler,Chandler,1,individual
+2,Joey,Joey,1,individual  
+3,Monica,Monica,1,individual
+4,Phoebe,Phoebe,1,individual
+5,Rachel,Rachel,1,individual
+6,Ross,Ross,1,individual
+12,Chandler + Joey,"Chandler;Joey",2,pair
+13,Chandler + Monica,"Chandler;Monica",2,pair
+14,Chandler + Phoebe,"Chandler;Phoebe",2,pair
+15,Chandler + Rachel,"Chandler;Rachel",2,pair
+16,Chandler + Ross,"Chandler;Ross",2,pair
+23,Joey + Monica,"Joey;Monica",2,pair
+24,Joey + Phoebe,"Joey;Phoebe",2,pair
+25,Joey + Rachel,"Joey;Rachel",2,pair
+26,Joey + Ross,"Joey;Ross",2,pair
+34,Monica + Phoebe,"Monica;Phoebe",2,pair
+35,Monica + Rachel,"Monica;Rachel",2,pair  
+36,Monica + Ross,"Monica;Ross",2,pair
+45,Phoebe + Rachel,"Phoebe;Rachel",2,pair
+46,Phoebe + Ross,"Phoebe;Ross",2,pair
+56,Rachel + Ross,"Rachel;Ross",2,pair
+123,Chandler + Joey + Monica,"Chandler;Joey;Monica",3,trio
+124,Chandler + Joey + Phoebe,"Chandler;Joey;Phoebe",3,trio
+125,Chandler + Joey + Rachel,"Chandler;Joey;Rachel",3,trio
+126,Chandler + Joey + Ross,"Chandler;Joey;Ross",3,trio_male
+134,Chandler + Monica + Phoebe,"Chandler;Monica;Phoebe",3,trio
+135,Chandler + Monica + Rachel,"Chandler;Monica;Rachel",3,trio
+136,Chandler + Monica + Ross,"Chandler;Monica;Ross",3,trio
+145,Chandler + Phoebe + Rachel,"Chandler;Phoebe;Rachel",3,trio
+146,Chandler + Phoebe + Ross,"Chandler;Phoebe;Ross",3,trio
+156,Chandler + Rachel + Ross,"Chandler;Rachel;Ross",3,trio
+234,Joey + Monica + Phoebe,"Joey;Monica;Phoebe",3,trio
+235,Joey + Monica + Rachel,"Joey;Monica;Rachel",3,trio
+245,Joey + Phoebe + Rachel,"Joey;Phoebe;Rachel",3,trio
+246,Joey + Phoebe + Ross,"Joey;Phoebe;Ross",3,trio
+256,Joey + Rachel + Ross,"Joey;Rachel;Ross",3,trio
+345,Monica + Phoebe + Rachel,"Monica;Phoebe;Rachel",3,trio_female
+346,Monica + Phoebe + Ross,"Monica;Phoebe;Ross",3,trio
+356,Monica + Rachel + Ross,"Monica;Rachel;Ross",3,trio
+456,Phoebe + Rachel + Ross,"Phoebe;Rachel;Ross",3,trio
+1234,Chandler + Joey + Monica + Phoebe,"Chandler;Joey;Monica;Phoebe",4,quartet
+1235,Chandler + Joey + Monica + Rachel,"Chandler;Joey;Monica;Rachel",4,quartet
+1245,Chandler + Joey + Phoebe + Rachel,"Chandler;Joey;Phoebe;Rachel",4,quartet
+1345,Chandler + Monica + Phoebe + Rachel,"Chandler;Monica;Phoebe;Rachel",4,quartet
+2345,Joey + Monica + Phoebe + Rachel,"Joey;Monica;Phoebe;Rachel",4,quartet
+2456,Joey + Phoebe + Rachel + Ross,"Joey;Phoebe;Rachel;Ross",4,quartet
+3456,Monica + Phoebe + Rachel + Ross,"Monica;Phoebe;Rachel;Ross",4,quartet
+12345,Chandler + Joey + Monica + Phoebe + Rachel,"Chandler;Joey;Monica;Phoebe;Rachel",5,quintet
+12356,Chandler + Joey + Monica + Rachel + Ross,"Chandler;Joey;Monica;Rachel;Ross",5,quintet
+13456,Chandler + Monica + Phoebe + Rachel + Ross,"Chandler;Monica;Phoebe;Rachel;Ross",5,quintet
+23456,Joey + Monica + Phoebe + Rachel + Ross,"Joey;Monica;Phoebe;Rachel;Ross",5,quintet
+123456,Todos los amigos,"Chandler;Joey;Monica;Phoebe;Rachel;Ross",6,full_group
