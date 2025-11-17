@@ -136,7 +136,7 @@ sources:
 
 
       - name: raw_episode_rating
-        description: "Registros de rating y métricas auxiliares." #(puede contener múltiples filas por episodio con distintas 'dynamics')
+        description: "Registros de rating y métricas auxiliares." #(Contiene múltiples filas por episodio con distintas 'dynamics')
         columns:
           - name: epseason
             data_type: varchar

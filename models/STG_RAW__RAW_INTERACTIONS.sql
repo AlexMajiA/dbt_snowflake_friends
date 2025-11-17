@@ -11,10 +11,10 @@ WITH raw_interactions_source AS (
     ),
 
 raw_interactions_cleaned AS (
-    SEASON ,
-    EPISODE ,
-    CHARACTER1 ,
-    CHARACTER2
+    cast(SEASON as INTEGER) as SEASON,
+    cast(EPISODE as INTEGER) as EPISODE,
+    trim(CHARACTER1) as CHARACTER1,
+    trim(CHARACTER2) as CHARACTER2
     
     FROM raw_interactions_source
     )
