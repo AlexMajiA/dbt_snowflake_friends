@@ -28,4 +28,3 @@ raw_episode_rating_cleaned AS (
 
 SELECT * FROM raw_episode_rating_cleaned
 
---Falta crear una tabla para dynamics, donde se relacionen con actores 
