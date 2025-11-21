@@ -23,6 +23,7 @@ raw_interactions_cleaned AS (
         MD5(TRIM(UPPER(character1))) AS speaker1_id,
         MD5(TRIM(UPPER(character2))) AS speaker2_id,
         
+        --Lo añado por si fallan los id y quiero ver datos originales y para relaciones directas sin joins.
         CAST(season AS INTEGER) AS season,
         CAST(episode AS INTEGER) AS episode,
         TRIM(character1) AS character1_name,
