@@ -1,7 +1,7 @@
 
 {{
   config(
-    materialized='view'
+    materialized='table'
   )
 }}
 
@@ -12,25 +12,42 @@ WITH raw_dialogs_source AS (
 
 raw_dialogs_cleaned AS (
     SELECT
-        CAST(SEASON AS INTEGER) as SEASON ,
-        CAST(EPISODE AS INTEGER) as EPISODE,
-        CAST(SCENE AS INTEGER) as SCENE,
-        CAST(UTTERANCE AS INTEGER) as UTTERANCE,
-        TRIM(SPEAKER) AS SPEAKER ,
-        TRIM(TEXT) AS TEXT ,
+
+        md5(CONCAT(season, '-', episode, '-', scene, '-', utterance)) AS dialog_id,
+
+        --FK al episodio
+        MD5(CONCAT(season, '-', episode)) AS episode_id,
+
+        CAST(SEASON AS INTEGER) as season,
+        CAST(EPISODE AS INTEGER) as episode,
+        CAST(SCENE AS INTEGER) as scene,
+        CAST(UTTERANCE AS INTEGER) as utterance,
+
+        --FK a utterance
+        MD5(TRIM(UPPER(speaker))) AS speaker_id,
+
+        TRIM(TEXT) AS text ,
+
+        --Indico si el texto esta limpio con "0"
+        CASE 
+            WHEN text IS NULL OR TRIM(text) = '' OR tokens IS NULL THEN 0
+            ELSE 1 
+        END AS cleaned_flag,
 
         --Tokens convertidos a un formato que pueda usar en la capa intermedia para hacer análisis. 
-        PARSE_JSON(TOKENS) AS TOKENS_ARRAY,
+        PARSE_JSON(TOKENS) AS tokens_array,
 
         --Conteo de elementos del array, solo muestra cuantos tokens tiene para no cambiar la granularidad.
-        ARRAY_SIZE(PARSE_JSON(TOKENS)) AS TOKEN_COUNT,
+        ARRAY_SIZE(PARSE_JSON(TOKENS)) AS tokens_count,
+
+        --Metadata
         CURRENT_TIMESTAMP() as processed_at
 
     FROM raw_dialogs_source
-    WHERE SEASON IS NOT NULL
-        AND EPISODE IS NOT NULL
-        AND SCENE IS NOT NULL
-        AND UTTERANCE IS NOT NULL
+    WHERE season IS NOT NULL
+        AND episode IS NOT NULL
+        AND scene IS NOT NULL
+        AND utterance IS NOT NULL
     )
 
 SELECT * FROM raw_dialogs_cleaned
