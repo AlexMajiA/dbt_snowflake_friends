@@ -12,4 +12,4 @@ SELECT DISTINCT
 
 FROM {{ source('raw', 'raw_dialogs') }}
 WHERE speaker IS NOT NULL 
-    AND TRIM(speaker) != ''
+    AND TRIM(speaker) != ''  --consulta para ver que es
