@@ -1,7 +1,7 @@
 {{
   config(
     materialized='table',
-    unique_key='emotion_id'
+    unique_key='emotion_id' 
   )
 }}
 
