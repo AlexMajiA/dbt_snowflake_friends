@@ -1,40 +1,32 @@
-
 {{
   config(
-    materialized='view',
-    unique_key='interaction_id'
+    materialized='table'
   )
 }}
 
-WITH raw_interactions_source AS (
-    SELECT * 
-    FROM {{ source('raw', 'raw_interactions') }}
+WITH raw_episode_rating_source AS (
+    SELECT *
+    FROM {{ source('raw', 'raw_episode_rating') }}
 ),
 
-raw_interactions_cleaned AS (
+episode_cleaned AS (
     SELECT
-        --ID único para la interacción
-        MD5(CONCAT(season, '-', episode, '-', character1, '-', character2)) AS interaction_id,
-        
-        --FK al episodio
-        MD5(CONCAT(season, '-', episode)) AS episode_id,
-        
-        --FKs a los speakers
-        MD5(TRIM(UPPER(character1))) AS speaker1_id,
-        MD5(TRIM(UPPER(character2))) AS speaker2_id,
-        
-        --Lo añado por si fallan los id y quiero ver datos originales y para relaciones directas sin joins.
-        CAST(season AS INTEGER) AS season,
-        CAST(episode AS INTEGER) AS episode,
-        TRIM(character1) AS character1_name,
-        TRIM(character2) AS character2_name
-        
-    FROM raw_interactions_source
-    WHERE season IS NOT NULL
-      AND episode IS NOT NULL
-      AND character1 IS NOT NULL
-      AND character2 IS NOT NULL
-      AND character1 != character2 --Con esto, evito que sea el mismo.
+        MD5(CONCAT(epseason, '-', epnum)) AS episode_id,
+        CAST(epseason AS INTEGER) AS season,
+        CAST(epnum AS INTEGER) AS episode_number,
+        rating,
+        TRIM(dynamics) AS combination_code
+    FROM raw_episode_rating_source
+    WHERE epseason IS NOT NULL
+      AND epnum IS NOT NULL
+      AND dynamics IS NOT NULL
 )
 
-SELECT * FROM raw_interactions_cleaned
+SELECT
+    MD5(CONCAT(episode_id, '-', combination_code)) AS id_dynamics,
+    episode_id,
+    combination_code,
+    rating,
+    season,
+    episode_number
+FROM episode_cleaned
