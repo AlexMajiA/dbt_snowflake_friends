@@ -20,9 +20,14 @@ episodes_cleaned AS (
         CAST(YEAR_OF_PROD AS INTEGER) AS year,
         TRIM(EPISODE_TITLE) AS title,
         CAST(DURATION AS INTEGER) AS duration,
-        TRIM(SUMMARY) AS summary
+        TRIM(SUMMARY) AS summary,
         
+        CAST(NULLIF(replace(STARS, ',', '.'), '') as FLOAT) AS STARS,
+        CAST(NULLIF(VOTES, '') as INTEGER) AS VOTES ,
+        CAST(NULLIF(replace(US_VIEWS_MILLIONS, ',', '.'), '') as FLOAT) AS US_VIEWS_MILLIONS
+
     FROM raw_episode_meta_source
+
     WHERE YEAR_OF_PROD IS NOT NULL
         AND SEASON IS NOT NULL
         AND EPISODE_NUMBER IS NOT NULL
