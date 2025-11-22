@@ -13,7 +13,7 @@ sources:
       warn_after: { count: 500, period: hour }
       error_after: { count: 500, period: day }
 
-
+    # RAW_DIALOGS
     tables:
       - name: raw_dialogs
         description: "Diálogos por declaración. Nivel más fino: season, episode, scene, utterance, speaker, text, tokens."
@@ -23,34 +23,41 @@ sources:
             description: "Número de temporada."
             tests:
               - not_null
+
           - name: episode
             data_type: varchar
             description: "Número de episodio dentro de la temporada."
             tests:
               - not_null
+
           - name: scene
             data_type: varchar
             description: "Identificador de escena dentro del episodio."
             tests:
               - not_null
+
           - name: utterance #declaración
             data_type: varchar
             description: "Número/identificador de utterance dentro de la escena."
             tests:
               - not_null
+
           - name: speaker
             data_type: varchar
             description: "Nombre del personaje que habla."
             tests:
               - not_null
+
           - name: text
             data_type: varchar
             description: "Texto completo del utterance (puede incluir comillas y puntuación)"
+
           - name: tokens
             data_type: varchar
             description: "Representación tokenizada (string/JSON) del utterance."
 
 
+      # RAW_EMOTIONS
       - name: raw_emotions
         description: "Etiqueta de emoción por utterance; puede haber múltiples filas por utterance si la fuente duplica o hay versiones."
         columns:
@@ -59,35 +66,41 @@ sources:
             description: "Temporada."
             tests:
               - not_null
+
           - name: episode
             data_type: varchar
             description: "Episodio."
             tests:
               - not_null
+
           - name: scene
             data_type: varchar
             description: "Escena."
             tests:
               - not_null
+
           - name: utterance
             data_type: varchar
             description: "Utterance id."
             tests:
               - not_null
+
           - name: emotion
             data_type: varchar
             description: "Etiqueta de emoción asignada al utterance."
             tests:
               - not_null
+
               - accepted_values:
-                  values: ["Mad","Neutral","Joyful","Scared","Sad","Powerful","Peaceful"] #"Enfadado" "Neutral" "Alegre" "Asustado" "Triste" "Poderoso" "Pacífico"
+                  values: ["Mad","Neutral","Joyful","Scared","Sad","Powerful","Peaceful"] #"Enfadado" "Neutral" "Alegre" "Asustado" "Triste" "Poderoso" "Pacífico"]
+
           - name: speaker
             data_type: varchar
             description: "Personaje asociado a la emoción."
             tests:
               - not_null
-
-
+      
+      #raw_episode_meta
       - name: raw_episode_meta
         description: "Metadata rica del episodio: título, duración, resumen, director, estrellas, votos y vistas." #Candidato para snapshot SCD2.
         columns:
@@ -134,7 +147,7 @@ sources:
             data_type: varchar
             description: "Numero de visualizaciones en EEUU (millones)"
 
-
+      #raw_episode_rating
       - name: raw_episode_rating
         description: "Registros de rating y métricas auxiliares." #(Contiene múltiples filas por episodio con distintas 'dynamics')
         columns:
@@ -161,7 +174,7 @@ sources:
             data_type: varchar
             description: "Métrica auxiliar (valores numéricos o categorías), usada para demostrar cambios/variaciones."
 
-
+      #raw_interactions
       - name: raw_interactions
         description: "Interacciones par a par entre personajes dentro de un episodio (una fila por interacción detectada)."
         columns:
@@ -190,6 +203,8 @@ sources:
             tests:
               - not_null
 
+              
+#dim_dynamics_mapping
 seeds:
   - name: dim_dynamics_mapping
     description: "Mapping entre códigos de dinámica y personajes involucrados"
@@ -214,4 +229,6 @@ seeds:
       - name: category
         tests:
           - not_null
+
+
 
