@@ -30,15 +30,16 @@ raw_dialogs_cleaned AS (
 
         --Indico si el texto esta limpio con "0"
         CASE 
-            WHEN text IS NULL OR TRIM(text) = '' OR tokens IS NULL THEN 0
-            ELSE 1 
+            WHEN text IS NULL OR TRIM(text) = '' OR tokens IS NULL OR TRIM(tokens) = '' THEN 0
+            ELSE 1
         END AS cleaned_flag,
+
 
         --Tokens convertidos a un formato que pueda usar en la capa intermedia para hacer análisis. 
         PARSE_JSON(TOKENS) AS tokens_array,
 
         --Conteo de elementos del array, solo muestra cuantos tokens tiene para no cambiar la granularidad.
-        ARRAY_SIZE(PARSE_JSON(TOKENS)) AS tokens_count,
+        ARRAY_SIZE(PARSE_JSON(TOKENS)) AS token_count,
 
         --Metadata
         CURRENT_TIMESTAMP() as processed_at

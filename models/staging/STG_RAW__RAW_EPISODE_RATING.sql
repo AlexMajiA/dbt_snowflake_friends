@@ -1,30 +1,35 @@
-
-{{
-  config(
-    materialized='view'
-  )
+{{ 
+    config(
+        materialized='table'
+    ) 
 }}
 
-WITH episode_rating_source AS (
-    SELECT * 
+WITH source_data AS (
+    SELECT *
     FROM {{ source('raw', 'raw_episode_rating') }}
-    ),
+),
 
-raw_episode_rating_cleaned AS (
+cleaned AS (
     SELECT
-        cast(EPSEASON as INTEGER) as EPSEASON,
-        cast(EPNUM as INTEGER) as EPNUM,
-        trim(EPNAME) as EPNAME,
-        cast(NULLIF(RATING, '') as FLOAT) as RATING ,
-        cast(DYNAMICS as INTEGER) as DYNAMICS, 
-        
-        CURRENT_TIMESTAMP() as processed_at
+        -- ID consistente con todos los episodios (estándar para toda Silver)
+        MD5(
+            CONCAT(TRIM(CAST(EPSEASON AS STRING)),'-', TRIM(CAST(EPNUM AS STRING)))
+        ) AS episode_id,
 
-    FROM episode_rating_source
-        WHERE EPSEASON IS NOT NULL
-            AND EPNUM IS NOT NULL
+        CAST(EPSEASON AS INTEGER) AS season,
+        CAST(EPNUM AS INTEGER) AS episode_number,
+        TRIM(EPNAME) AS title,
 
-    )
+        CAST(NULLIF(RATING, '') AS FLOAT) AS rating,
+        CAST(NULLIF(DYNAMICS, '') AS INTEGER) AS dynamics_code,
 
-SELECT * FROM raw_episode_rating_cleaned
+        CURRENT_TIMESTAMP() AS processed_at
+    FROM source_data
+    WHERE EPSEASON IS NOT NULL
+      AND EPNUM IS NOT NULL
+)
+
+SELECT * FROM cleaned
+
+
 

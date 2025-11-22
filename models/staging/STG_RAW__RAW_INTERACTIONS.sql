@@ -1,32 +1,35 @@
-{{
-  config(
+{{ 
+    config(
     materialized='table'
-  )
+    ) 
 }}
 
-WITH raw_episode_rating_source AS (
+WITH src AS (
     SELECT *
-    FROM {{ source('raw', 'raw_episode_rating') }}
+    FROM {{ source('raw', 'raw_interactions') }}
 ),
 
-episode_cleaned AS (
+clean AS (
     SELECT
-        MD5(CONCAT(epseason, '-', epnum)) AS episode_id,
-        CAST(epseason AS INTEGER) AS season,
-        CAST(epnum AS INTEGER) AS episode_number,
-        rating,
-        TRIM(dynamics) AS combination_code
-    FROM raw_episode_rating_source
-    WHERE epseason IS NOT NULL
-      AND epnum IS NOT NULL
-      AND dynamics IS NOT NULL
+        -- ID de interacción
+        MD5(CONCAT(season, '-', episode, '-', character1, '-', character2)) AS interaction_id,
+
+        -- Episodio consistente
+        MD5(CONCAT(season, '-', episode)) AS episode_id,
+
+        CAST(season AS INTEGER) AS season,
+        CAST(episode AS INTEGER) AS episode_number,
+
+        -- IDs de personaje estandarizados
+        MD5(UPPER(TRIM(character1))) AS character1_id,
+        MD5(UPPER(TRIM(character2))) AS character2_id,
+
+        CURRENT_TIMESTAMP() AS processed_at
+    FROM src
+    WHERE season IS NOT NULL
+      AND episode IS NOT NULL
+      AND character1 IS NOT NULL
+      AND character2 IS NOT NULL
 )
 
-SELECT
-    MD5(CONCAT(episode_id, '-', combination_code)) AS id_dynamics,
-    episode_id,
-    combination_code,
-    rating,
-    season,
-    episode_number
-FROM episode_cleaned
+SELECT * FROM clean
