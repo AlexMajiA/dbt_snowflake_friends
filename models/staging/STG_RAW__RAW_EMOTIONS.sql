@@ -30,7 +30,10 @@ with_ids as (
         md5( upper(speaker_name) ) as id_character,
         md5( upper(emotion_name) ) as id_emotion,
 
-        md5(concat_ws('-',season, episode, scene_number, utterance_number, upper(speaker_name), upper(emotion_name))
+        --clave única del evento emocional específico ej.(5-3-7-2-ROSS-SADNESS)
+        md5(concat_ws('-',season, episode, scene_number, utterance_number, 
+                    upper(speaker_name),
+                    upper(emotion_name))
         ) as id_event,
 
         *
