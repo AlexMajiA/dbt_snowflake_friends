@@ -69,13 +69,13 @@ final_metrics as (
         e.id_director,
 
         -- Métricas con prioridad incremental
-        coalesce(i.stars, s.stars)                         as stars,
-        coalesce(i.votes, s.votes)                         as votes,
+        coalesce(i.stars, s.stars) as stars,
+        coalesce(i.votes, s.votes) as votes,
         coalesce(i.us_views_millions, s.us_views_millions) as us_views_millions,
 
         -- Tiempos de referencia
         i.ingest_timestamp,
-        s.dbt_valid_from                                   as snapshot_valid_from
+        s.dbt_valid_from as snapshot_valid_from
 
     from {{ ref('DIM_EPISODE') }} e
     left join snapshot_latest   s on e.id_episode = s.id_episode
@@ -94,8 +94,8 @@ with_rankings as (
         ingest_timestamp,
         snapshot_valid_from,
 
-        {{ calcular_ranking('votes') }}             as rank_votes,
-        {{ calcular_ranking('stars') }}             as rank_stars,
+        {{ calcular_ranking('votes') }} as rank_votes,
+        {{ calcular_ranking('stars') }} as rank_stars,
         {{ calcular_ranking('us_views_millions') }} as rank_views
 
     from final_metrics
