@@ -39,6 +39,12 @@ models:
       +schema: ANALYTICS
       +materialized: table
 
+    #INTERMEDIATE
+    intermediate:
+      +database: FRIENDS_SILVER
+      +schema: ANALYTICS
+
+
     # GOLD (MARTS / DATA MODELING)
     marts:
       +database: FRIENDS_GOLD
