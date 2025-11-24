@@ -1,14 +1,29 @@
 {{ config(
-    materialized='table'
+    materialized = 'table',
+    unique_key   = 'id_episode',
+    tags         = ['gold', 'fact_episode_performance']
 ) }}
 
-
--- 1. ÚLTIMA VERSIÓN DEL SNAPSHOT (historia consolidada)
+-- 1. Última versión del snapshot (historia consolidada)
 with snapshot_latest as (
 
     select *
     from (
-        select *,
+        select
+            id_episode,
+            id_director,
+            season,
+            episode_number,
+            year,
+            title,
+            duration,
+            summary,
+            stars,
+            votes,
+            us_views_millions,
+            dbt_scd_id,
+            dbt_valid_from,
+            dbt_valid_to,
             row_number() over (
                 partition by id_episode
                 order by dbt_valid_from desc
@@ -18,13 +33,24 @@ with snapshot_latest as (
     where rn = 1
 ),
 
-
--- 2. ÚLTIMA VERSIÓN DEL INCREMENTAL (ingestas simuladas)
+-- 2. Última versión del incremental (ingestas simuladas)
 incremental_latest as (
 
     select *
     from (
-        select *,
+        select
+            id_episode,
+            id_director,
+            season,
+            episode_number,
+            year,
+            title,
+            duration,
+            summary,
+            stars,
+            votes,
+            us_views_millions,
+            ingest_timestamp,
             row_number() over (
                 partition by id_episode
                 order by ingest_timestamp desc
@@ -34,42 +60,60 @@ incremental_latest as (
     where rn = 1
 ),
 
-
--- 3. COMBINACIÓN LÓGICA → incremental tiene prioridad
+-- 3. Métricas finales → incremental tiene prioridad
 final_metrics as (
 
     select
+        -- Claves de dimensión
         e.id_episode,
         e.id_director,
 
         -- Métricas con prioridad incremental
-        coalesce(i.stars, s.stars)               as stars,
-        coalesce(i.votes, s.votes)               as votes,
+        coalesce(i.stars, s.stars)                         as stars,
+        coalesce(i.votes, s.votes)                         as votes,
         coalesce(i.us_views_millions, s.us_views_millions) as us_views_millions,
 
         -- Tiempos de referencia
         i.ingest_timestamp,
-        s.dbt_valid_from as snapshot_valid_from
+        s.dbt_valid_from                                   as snapshot_valid_from
 
     from {{ ref('DIM_EPISODE') }} e
-    left join snapshot_latest s on e.id_episode = s.id_episode
+    left join snapshot_latest   s on e.id_episode = s.id_episode
     left join incremental_latest i on e.id_episode = i.id_episode
 ),
 
-
--- 4. Rankings usando tu macro calcular_ranking()
+-- 4. Rankings usando la macro calcular_ranking()
 with_rankings as (
 
     select
-        *,
+        id_episode,
+        id_director,
+        stars,
+        votes,
+        us_views_millions,
+        ingest_timestamp,
+        snapshot_valid_from,
+
         {{ calcular_ranking('votes') }}             as rank_votes,
         {{ calcular_ranking('stars') }}             as rank_stars,
         {{ calcular_ranking('us_views_millions') }} as rank_views
+
     from final_metrics
 )
 
-select *
-from with_rankings;
+select
+    id_episode,
+    id_director,
+    stars,
+    votes,
+    us_views_millions,
+    ingest_timestamp,
+    snapshot_valid_from,
+    rank_votes,
+    rank_stars,
+    rank_views
+from with_rankings
+
 
 
 

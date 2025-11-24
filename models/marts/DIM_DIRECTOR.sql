@@ -4,7 +4,7 @@ with director_base as (
 
     select
         id_director,
-        director as director_name
+        name as director_name
     from {{ ref('STG_RAW__DIRECTOR') }}
 
 ),

@@ -1,28 +1,41 @@
-{{
-  config(
-    materialized='table',
-    unique_key='emotion_id' 
-  )
-}}
-
-SELECT DISTINCT
-    MD5(TRIM(UPPER(emotion))) AS emotion_id,
-    TRIM(emotion) AS emotion_name
-FROM {{ source('raw', 'raw_emotions') }}
-WHERE emotion IS NOT NULL
-  AND TRIM(emotion) != ''
-
-/*
-
-  {{ config(
-    materialized='table',
-    unique_key='emotion_id'
+{{ config(
+    materialized = 'table',
+    unique_key = 'id_event'
 ) }}
 
-SELECT DISTINCT
-    MD5(TRIM(UPPER(emotion))) AS emotion_id,
-    TRIM(emotion) AS emotion_name
-FROM {{ source('raw', 'raw_emotions') }}
-WHERE emotion IS NOT NULL
-  AND TRIM(emotion) != ''
-*/
+with raw as (
+    select
+
+        cast(season as integer)         as season,
+        cast(episode as integer)        as episode,
+        cast(scene as integer)          as scene_number,
+        cast(utterance as integer)      as utterance_number,
+        trim(emotion)                   as emotion_name,
+        trim(speaker)                   as speaker_name
+
+    from {{ source('raw', 'raw_emotions') }}
+    where season is not null
+      and episode is not null
+      and scene is not null
+      and utterance is not null
+      and emotion is not null
+      and speaker is not null
+),
+
+with_ids as (
+    select
+
+        md5( concat_ws('-', season, episode) ) as id_episode,
+        md5( concat_ws('-', season, episode, scene_number) ) as id_scene,
+        md5( upper(speaker_name) ) as id_character,
+        md5( upper(emotion_name) ) as id_emotion,
+
+        md5(concat_ws('-',season, episode, scene_number, utterance_number, upper(speaker_name), upper(emotion_name))
+        ) as id_event,
+
+        *
+    from raw
+)
+
+select * from with_ids
+
