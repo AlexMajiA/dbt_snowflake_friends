@@ -10,8 +10,8 @@ sources:
       identifier: false
 
     freshness:
-      warn_after: { count: 500, period: hour }
-      error_after: { count: 500, period: day }
+      warn_after: { count: 5, period: minute }
+      error_after: { count: 5, period: minute }
 
     # RAW_DIALOGS
     tables:
