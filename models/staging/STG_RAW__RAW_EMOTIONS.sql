@@ -5,14 +5,12 @@
 
 with raw as (
     select
-
         cast(season as integer)         as season,
         cast(episode as integer)        as episode,
         cast(scene as integer)          as scene_number,
         cast(utterance as integer)      as utterance_number,
         trim(emotion)                   as emotion_name,
         trim(speaker)                   as speaker_name
-
     from {{ source('raw', 'raw_emotions') }}
     where season is not null
       and episode is not null
@@ -24,21 +22,29 @@ with raw as (
 
 with_ids as (
     select
-
         md5( concat_ws('-', season, episode) ) as id_episode,
         md5( concat_ws('-', season, episode, scene_number) ) as id_scene,
         md5( upper(speaker_name) ) as id_character,
         md5( upper(emotion_name) ) as id_emotion,
-
-        --clave única del evento emocional específico ej.(5-3-7-2-ROSS-SADNESS)
-        md5(concat_ws('-',season, episode, scene_number, utterance_number, 
-                    upper(speaker_name),
-                    upper(emotion_name))
+        md5(
+            concat_ws('-',season, episode, scene_number, utterance_number,
+                upper(speaker_name),
+                upper(emotion_name)
+            )
         ) as id_event,
+        current_timestamp() as processed_at,
 
-        *
+        -- columnas originales
+        season,
+        episode,
+        scene_number,
+        utterance_number,
+        emotion_name,
+        speaker_name
     from raw
 )
 
-select * from with_ids
+select *
+from with_ids
+
 
