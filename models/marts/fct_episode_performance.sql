@@ -1,0 +1,93 @@
+{{ config(
+    materialized='table'
+) }}
+
+
+-- 1. ÚLTIMA VERSIÓN DEL SNAPSHOT (historia consolidada)
+with snapshot_latest as (
+
+    select *
+    from (
+        select *,
+            row_number() over (
+                partition by id_episode
+                order by dbt_valid_from desc
+            ) as rn
+        from {{ ref('episode_meta_snapshot') }}
+    )
+    where rn = 1
+),
+
+
+-- 2. ÚLTIMA VERSIÓN DEL INCREMENTAL (ingestas simuladas)
+incremental_latest as (
+
+    select *
+    from (
+        select *,
+            row_number() over (
+                partition by id_episode
+                order by ingest_timestamp desc
+            ) as rn
+        from {{ ref('INT_EPISODE_PERFORMANCE') }}
+    )
+    where rn = 1
+),
+
+
+-- 3. COMBINACIÓN LÓGICA → incremental tiene prioridad
+final_metrics as (
+
+    select
+        e.id_episode,
+        e.id_director,
+
+        -- Métricas con prioridad incremental
+        coalesce(i.stars, s.stars)               as stars,
+        coalesce(i.votes, s.votes)               as votes,
+        coalesce(i.us_views_millions, s.us_views_millions) as us_views_millions,
+
+        -- Tiempos de referencia
+        i.ingest_timestamp,
+        s.dbt_valid_from as snapshot_valid_from
+
+    from {{ ref('DIM_EPISODE') }} e
+    left join snapshot_latest s on e.id_episode = s.id_episode
+    left join incremental_latest i on e.id_episode = i.id_episode
+),
+
+
+-- 4. Rankings usando tu macro calcular_ranking()
+with_rankings as (
+
+    select
+        *,
+        {{ calcular_ranking('votes') }}             as rank_votes,
+        {{ calcular_ranking('stars') }}             as rank_stars,
+        {{ calcular_ranking('us_views_millions') }} as rank_views
+    from final_metrics
+)
+
+select *
+from with_rankings;
+
+
+
+-- ============================================================================
+-- FACT TABLE: EPISODE PERFORMANCE (GOLD)
+--
+-- Esta fact está modelada EN ESTRELLA:
+--   - Depende de DIM_EPISODE (id_episode)
+--   - Depende de DIM_DIRECTOR (id_director)
+--
+-- Las métricas provienen de:
+--   1. Snapshot SCD2  -> Datos históricos consolidados
+--   2. Incremental    -> Ingestas simuladas (datos más recientes)
+--
+-- Reglas de combinación:
+--   - Si existe dato incremental → tiene prioridad
+--   - Si no existe → usar snapshot
+--
+-- NOTA: Esta fact ya no toma metadata del staging.
+--       La metadata está en las DIMs, como debe ser.
+-- ============================================================================
