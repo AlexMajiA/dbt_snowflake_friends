@@ -4,7 +4,7 @@
     tags         = ['gold', 'fact_episode_performance']
 ) }}
 
--- 1. Última versión del snapshot (historia consolidada)
+--Obtengo los datos de la última versión del snapshot
 with snapshot_latest as (
 
     select *

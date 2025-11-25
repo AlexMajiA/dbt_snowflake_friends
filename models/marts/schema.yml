@@ -1,0 +1,178 @@
+version: 2
+
+models:
+
+  #DIM_EPISODE
+  - name: DIM_EPISODE
+    description: "Dimensión de episodios de Friends. Una fila por episodio."
+    columns:
+      - name: id_episode
+        description: "Clave subrogada del episodio (MD5 de temporada y número de episodio)."
+        tests:
+          - not_null
+          - unique
+      - name: id_director
+        description: "Clave subrogada del director que dirigió el episodio."
+        tests:
+          - not_null
+      - name: season
+        description: "Número de temporada del episodio."
+        tests:
+          - not_null
+      - name: episode_number
+        description: "Número de episodio dentro de la temporada."
+        tests:
+          - not_null
+      - name: year
+        description: "Año de producción del episodio."
+        tests:
+          - not_null
+      - name: title
+        description: "Título del episodio."
+      - name: duration
+        description: "Duración del episodio en minutos."
+      - name: summary
+        description: "Resumen breve del episodio."
+
+  #DIM_DIRECTOR
+  - name: DIM_DIRECTOR
+    description: "Dimensión de directores de episodios. Una fila por director."
+    columns:
+      - name: id_director
+        description: "Clave subrogada del director (MD5 del nombre normalizado)."
+        tests:
+          - not_null
+          - unique
+      - name: director_name
+        description: "Nombre del director."
+        tests:
+          - not_null
+
+  #DIM_CHARACTER
+  - name: DIM_CHARACTER
+    description: "Dimensión de personajes con emociones etiquetadas. Una fila por personaje."
+    columns:
+      - name: id_character
+        description: "Clave subrogada del personaje (MD5 del nombre)."
+        tests:
+          - not_null
+          - unique
+      - name: character_name
+        description: "Nombre del personaje."
+        tests:
+          - not_null
+
+
+  #DIM_SCENE
+  - name: DIM_SCENE
+    description: "Dimensión de escenas. Una fila por escena dentro de un episodio."
+    columns:
+      - name: id_scene
+        description: "Clave subrogada de la escena (MD5 de temporada, episodio y número de escena)."
+        tests:
+          - not_null
+          - unique
+      - name: id_episode
+        description: "Clave subrogada del episodio al que pertenece la escena."
+        tests:
+          - not_null
+      - name: season
+        description: "Temporada."
+        tests:
+          - not_null
+      - name: episode
+        description: "Número de episodio."
+        tests:
+          - not_null
+      - name: scene_number
+        description: "Número de la escena dentro del episodio."
+        tests:
+          - not_null
+
+  #DIM_EMOTION
+  - name: DIM_EMOTION
+    description: "Dimensión de tipos de emoción. Una fila por emoción etiquetada."
+    columns:
+      - name: id_emotion
+        description: "Clave subrogada de la emoción (MD5 del nombre de la emoción)."
+        tests:
+          - not_null
+          - unique
+      - name: emotion_name
+        description: "Nombre del tipo de emoción."
+        tests:
+          - not_null
+
+  #FCT_EPISODE_PERFORMANCE
+  - name: FCT_EPISODE_PERFORMANCE
+    description: "Tabla de hechos con métricas de desempeño por episodio. Grano: una fila por episodio."
+    columns:
+      - name: id_episode
+        description: "Clave subrogada del episodio."
+        tests:
+          - not_null
+          - unique
+      - name: id_director
+        description: "Clave subrogada del director."
+        tests:
+          - not_null
+      - name: summary
+        description: "Sinopsis del episodio."
+      - name: stars
+        description: "Calificación promedio del episodio."
+      - name: votes
+        description: "Cantidad de votos recibidos."
+      - name: us_views_millions
+        description: "Audiencia estimada en millones."
+      - name: ingest_timestamp
+        description: "Fecha y hora de la última ingestión incremental registrada."
+      - name: snapshot_valid_from
+        description: "Inicio de validez del snapshot usado."
+      - name: rank_votes
+        description: "Ranking del episodio según número de votos."
+      - name: rank_stars
+        description: "Ranking del episodio según calificación."
+      - name: rank_views
+        description: "Ranking del episodio según audiencia."
+
+  #FCT_EMOTIONS
+  - name: FCT_EMOTIONS
+    description: "Tabla de hechos con emociones detectadas por utterance. Grano: 1 fila por emoción detectada."
+    columns:
+      - name: id_event
+        description: "Clave subrogada del evento de emoción (utterance)."
+        tests:
+          - not_null
+          - unique
+      - name: id_episode
+        description: "Clave subrogada del episodio."
+        tests:
+          - not_null
+      - name: id_scene
+        description: "Clave subrogada de la escena."
+        tests:
+          - not_null
+      - name: id_character
+        description: "Clave subrogada del personaje."
+        tests:
+          - not_null
+      - name: id_emotion
+        description: "Clave subrogada de la emoción."
+        tests:
+          - not_null
+      - name: season
+        description: "Temporada."
+      - name: episode
+        description: "Número de episodio."
+      - name: scene_number
+        description: "Número de la escena."
+      - name: utterance_number
+        description: "Número de la línea dentro de la escena."
+      - name: processed_at
+        description: "Fecha y hora de procesamiento de la emoción."
+      - name: character_name
+        description: "Nombre del personaje."
+      - name: emotion
+        description: "Nombre de la emoción."
+      - name: dialog_text
+        description: "Texto de la línea de diálogo."
