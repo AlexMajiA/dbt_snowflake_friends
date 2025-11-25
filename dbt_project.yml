@@ -35,18 +35,18 @@ models:
 
     # SILVER (STAGING)
     staging:
-      +database: FRIENDS_SILVER
+      +database: "{{ env_var('DBT_ENVIRONMENTS') }}_SILVER"
       +schema: ANALYTICS
       +materialized: table
 
     #INTERMEDIATE
     intermediate:
-      +database: FRIENDS_SILVER
+      +database: "{{ env_var('DBT_ENVIRONMENTS') }}_SILVER"
       +schema: ANALYTICS
 
 
     # GOLD (MARTS / DATA MODELING)
     marts:
-      +database: FRIENDS_GOLD
+      +database: "{{ env_var('DBT_ENVIRONMENT') }}_GOLD"
       +schema: ANALYTICS
       +materialized: table

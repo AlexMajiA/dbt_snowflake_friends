@@ -45,6 +45,8 @@ validated as (
         on s.id_character = d_ch.id_character
     inner join {{ ref('DIM_EMOTION') }}   d_em 
         on s.id_emotion   = d_em.id_emotion
+    
+
 )
 
 select *

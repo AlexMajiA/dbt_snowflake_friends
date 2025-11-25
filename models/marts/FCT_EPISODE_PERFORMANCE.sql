@@ -4,7 +4,7 @@
     tags         = ['gold', 'fact_episode_performance']
 ) }}
 
--- 1. Última versión del snapshot (historia consolidada)
+--Obtengo los datos de la última versión del snapshot
 with snapshot_latest as (
 
     select *
@@ -80,6 +80,7 @@ final_metrics as (
     from {{ ref('DIM_EPISODE') }} e
     left join snapshot_latest   s on e.id_episode = s.id_episode
     left join incremental_latest i on e.id_episode = i.id_episode
+    left join {{ ref('DIM_DIRECTOR') }} d on e.id_director = d.id_director
 ),
 
 -- 4. Rankings usando la macro calcular_ranking()
