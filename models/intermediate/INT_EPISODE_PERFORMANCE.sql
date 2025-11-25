@@ -54,14 +54,24 @@ episode_enriched as (
         end as rating_category
 
     from episode_source
+),
+episode_dedup as (
+
+    select *
+    from episode_enriched
+    qualify row_number() over (
+        partition by id_episode
+        order by ingest_timestamp desc
+    ) = 1
 )
 
-select * 
-from episode_enriched
+-- 4. SELECT FINAL (CON EL INCREMENTAL)
+select *
+from episode_dedup
 
 {% if is_incremental() %}
 
-    --SOLO INSERTO NUEVAS INGESTAS:
+    -- SOLO INSERTAMOS FILAS MÁS RECIENTES QUE LO ÚLTIMO CARGADO
     where ingest_timestamp > (select max(ingest_timestamp) from {{ this }})
 
 {% endif %}
