@@ -95,9 +95,9 @@ with_rankings as (
         ingest_timestamp,
         snapshot_valid_from,
 
-        {{ calcular_ranking('votes') }} as rank_votes,
-        {{ calcular_ranking('stars') }} as rank_stars,
-        {{ calcular_ranking('us_views_millions') }} as rank_views
+        {{ calcular_ranking("votes") }} as rank_votes,
+        {{ calcular_ranking("stars") }} as rank_stars,
+        {{ calcular_ranking("us_views_millions") }} as rank_views
 
     from final_metrics
 )
