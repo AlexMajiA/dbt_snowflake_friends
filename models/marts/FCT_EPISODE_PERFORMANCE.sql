@@ -33,7 +33,7 @@ with snapshot_latest as (
     where rn = 1
 ),
 
--- 2. Última versión del incremental (ingestas simuladas)
+-- 2.Injesta simulada
 incremental_latest as (
 
     select *
@@ -60,7 +60,7 @@ incremental_latest as (
     where rn = 1
 ),
 
--- 3. Métricas finales → incremental tiene prioridad
+-- 3. Métricas finales incremental tiene prioridad
 final_metrics as (
 
     select
@@ -114,6 +114,21 @@ select
     rank_stars,
     rank_views
 from with_rankings
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

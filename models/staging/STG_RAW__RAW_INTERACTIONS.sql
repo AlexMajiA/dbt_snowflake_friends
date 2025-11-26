@@ -14,13 +14,12 @@ clean AS (
         -- ID de interacción
         MD5(CONCAT(season, '-', episode, '-', character1, '-', character2)) AS interaction_id,
 
-        -- Episodio consistente
         MD5(CONCAT(season, '-', episode)) AS episode_id,
 
         CAST(season AS INTEGER) AS season,
         CAST(episode AS INTEGER) AS episode_number,
 
-        -- IDs de personaje estandarizados
+        -- IDs de personaje 
         MD5(UPPER(TRIM(character1))) AS character1_id,
         MD5(UPPER(TRIM(character2))) AS character2_id,
 

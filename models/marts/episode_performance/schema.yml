@@ -1,0 +1,27 @@
+version: 2
+
+models:
+
+  - name: dm_top_episodes
+    description: "Top 10 episodios mejor valorados."
+    tests:
+      - not_null:
+          column_name: episode_title
+
+  - name: dm_season_evolution
+    description: "Evolución del rating por temporada."
+    tests:
+      - not_null:
+          column_name: season
+
+  - name: dm_top_directors
+    description: "Ranking de directores por rating medio."
+    tests:
+      - not_null:
+          column_name: director_name
+
+  - name: dm_low_rating_high_views
+    description: "Episodios con mucha audiencia pero baja valoración."
+    tests:
+      - not_null:
+          column_name: title
