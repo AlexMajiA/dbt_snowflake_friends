@@ -6,7 +6,6 @@
     ) 
 }}
 
-
 with episode_source as (
 
     select
@@ -43,10 +42,8 @@ episode_enriched as (
         votes,
         us_views_millions,
 
-        -- La marca de ingesta se propaga
         ingest_timestamp,
 
-        -- columna derivada 
         case
             when stars >= 8 then 'High-rated'
             when stars >= 6 then 'Medium-rated'
@@ -65,13 +62,12 @@ episode_dedup as (
     ) = 1
 )
 
--- 4. SELECT FINAL (CON EL INCREMENTAL)
 select *
 from episode_dedup
 
 {% if is_incremental() %}
 
-    -- SOLO INSERTAMOS FILAS MÁS RECIENTES QUE LO ÚLTIMO CARGADO
+    --SOLO INSERTo FILAS MÁS RECIENTES QUE LO ÚLTIMO CARGADO
     where ingest_timestamp > (select max(ingest_timestamp) from {{ this }})
 
 {% endif %}
@@ -83,20 +79,18 @@ from episode_dedup
 
 
 
--- NOTAS:
--- INT_EPISODE_PERFORMANCE
--- Modelo incremental Silver que simula INGESTAS DIARIAS.
--- Cada ejecución añade "nuevos paquetes" con valores
--- actualizados de votes, stars y views.
---
--- Este modelo sirve como puente entre:
---   - STAGING (datos limpios)
---   - SNAPSHOT (historia)
---   - GOLD (fact table FCT_EPISODE_PERFORMANCE)
 
--- =======================================================
--- INT_EPISODE_PERFORMANCE
--- Simulación de ingestas: cada ejecución añade episodios
--- cuya marca ingest_timestamp sea mayor que la última 
--- ingesta registrada en este modelo.
--- =======================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -33,7 +33,7 @@ with snapshot_latest as (
     where rn = 1
 ),
 
--- 2.Injesta simulada
+--Hago injesta simulada
 incremental_latest as (
 
     select *
@@ -50,7 +50,6 @@ incremental_latest as (
             stars,
             votes,
             us_views_millions,
-            ingest_timestamp,
             row_number() over (
                 partition by id_episode
                 order by ingest_timestamp desc
@@ -60,21 +59,16 @@ incremental_latest as (
     where rn = 1
 ),
 
--- 3. Métricas finales incremental tiene prioridad
 final_metrics as (
 
     select
-        -- Claves de dimensión
         e.id_episode,
         e.id_director,
 
-        -- Métricas con prioridad incremental
         coalesce(i.stars, s.stars) as stars,
         coalesce(i.votes, s.votes) as votes,
         coalesce(i.us_views_millions, s.us_views_millions) as us_views_millions,
 
-        -- Tiempos de referencia
-        i.ingest_timestamp,
         s.dbt_valid_from as snapshot_valid_from
 
     from {{ ref('DIM_EPISODE') }} e
@@ -83,7 +77,7 @@ final_metrics as (
     left join {{ ref('DIM_DIRECTOR') }} d on e.id_director = d.id_director
 ),
 
--- 4. Rankings usando la macro calcular_ranking()
+--Rankings usando la macro calcular_ranking()
 with_rankings as (
 
     select
@@ -92,7 +86,6 @@ with_rankings as (
         stars,
         votes,
         us_views_millions,
-        ingest_timestamp,
         snapshot_valid_from,
 
         {{ calcular_ranking("votes") }} as rank_votes,
@@ -108,12 +101,11 @@ select
     stars,
     votes,
     us_views_millions,
-    ingest_timestamp,
     snapshot_valid_from,
     rank_votes,
     rank_stars,
     rank_views
-from with_rankings
+from with_rankings 
 
 
 
