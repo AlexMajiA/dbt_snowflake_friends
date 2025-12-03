@@ -1,4 +1,4 @@
---definición del snapshot y nombre interno
+
 {% snapshot episode_meta_snapshot %}
 {{
     config(
@@ -25,6 +25,41 @@ select
 from {{ ref('STG_RAW__EPISODE') }}
 
 {% endsnapshot %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* Check: La estrategia de verificación es útil para las tablas que no tienen una columna updated_at confiable. 

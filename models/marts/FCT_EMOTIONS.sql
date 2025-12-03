@@ -23,13 +23,13 @@ validated as (
     select
         s.id_event,
 
-        -- Claves hacia dimensiones
+        --Claves hacia dimensiones
         s.id_episode,
         s.id_scene,
         s.id_character,
         s.id_emotion,
 
-        -- Atributos propios del hecho
+        --Atributos propios del hecho
         s.season,
         s.episode,
         s.scene_number,
@@ -45,8 +45,6 @@ validated as (
         on s.id_character = d_ch.id_character
     inner join {{ ref('DIM_EMOTION') }}   d_em 
         on s.id_emotion   = d_em.id_emotion
-    
-
 )
 
 select *

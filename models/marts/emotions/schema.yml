@@ -1,0 +1,27 @@
+version: 2
+
+models:
+
+  - name: dm_character_emotion_frequency
+    description: "Frecuencia de emociones expresadas por cada personaje."
+    tests:
+      - not_null:
+          column_name: character_name
+
+  - name: dm_episode_emotion_intensity
+    description: "Conteo de emociones por episodio y rankings asociados."
+    tests:
+      - not_null:
+          column_name: id_episode
+
+  - name: dm_episode_dominant_character
+    description: "Personaje dominante emocionalmente en cada episodio."
+    tests:
+      - not_null:
+          column_name: id_episode
+
+  - name: dm_season_character_ranking
+    description: "Ranking emocional de personajes por temporada."
+    tests:
+      - not_null:
+          column_name: season

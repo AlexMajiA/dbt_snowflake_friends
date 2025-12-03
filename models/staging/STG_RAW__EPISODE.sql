@@ -21,19 +21,44 @@ episodes_cleaned AS (
         TRIM(EPISODE_TITLE) AS title,
         CAST(DURATION AS INTEGER) AS duration,
         TRIM(SUMMARY) AS summary,
-        
-        CAST(NULLIF(replace(STARS, ',', '.'), '') as FLOAT) AS STARS,
-        CAST(NULLIF(VOTES, '') as INTEGER) AS VOTES ,
-        CAST(NULLIF(replace(US_VIEWS_MILLIONS, ',', '.'), '') as FLOAT) AS US_VIEWS_MILLIONS
 
+        CAST(NULLIF(REPLACE(STARS, ',', '.'), '') AS FLOAT) AS stars,
+        CAST(NULLIF(VOTES, '') AS INTEGER) AS votes,
+        CAST(NULLIF(REPLACE(US_VIEWS_MILLIONS, ',', '.'), '') AS FLOAT) AS us_views_millions,
+
+        CAST(INGEST_BATCH AS INTEGER) AS ingest_batch
     FROM raw_episode_meta_source
-
     WHERE YEAR_OF_PROD IS NOT NULL
-        AND SEASON IS NOT NULL
-        AND EPISODE_NUMBER IS NOT NULL
-        AND EPISODE_TITLE IS NOT NULL
-        AND DURATION IS NOT NULL
-        AND DIRECTOR IS NOT NULL
+      AND SEASON IS NOT NULL
+      AND EPISODE_NUMBER IS NOT NULL
+      AND EPISODE_TITLE IS NOT NULL
+      AND DURATION IS NOT NULL
+      AND DIRECTOR IS NOT NULL
+),
+
+dedup AS (
+    SELECT
+        *,
+        ROW_NUMBER() OVER (
+            PARTITION BY season, episode_number
+            ORDER BY ingest_batch DESC
+        ) AS rn
+    FROM episodes_cleaned
 )
 
-SELECT * FROM episodes_cleaned
+SELECT
+    id_episode,
+    id_director,
+    season,
+    episode_number,
+    year,
+    title,
+    duration,
+    summary,
+    stars,
+    votes,
+    us_views_millions,
+    ingest_batch
+FROM dedup
+QUALIFY rn = 1
+
