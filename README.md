@@ -108,5 +108,6 @@ El proyecto utiliza variables de entorno para adaptar los nombres de base de dat
 - Arquitectura diseñada para escalar con nuevos datasets.
 
 ---
-Autor: Alejandro Martínez Jiménez
+Autor: Alejandro Martínez Jiménez. 
+
 Stack: dbt · Snowflake · SQL · Jinja2
