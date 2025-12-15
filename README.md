@@ -1,8 +1,8 @@
 # Friends Analytics · Data Engineering Project
 
-Proyecto de **Data Engineering** construido con **dbt** y **Snowflake**, siguiendo una arquitectura en capas **Medallion (Bronze → Silver → Gold)** para el análisis analítico de datos de la serie *Friends*.
+Proyecto de **Data Engineering** construido con **dbt** y **Snowflake**, siguiendo una arquitectura en capas **Medallion (Bronze → Silver → Gold)** para la explotación analítica de datos de la serie *Friends*.
 
-El objetivo del proyecto es diseñar un pipeline ELT escalable que permita explotar métricas analíticas relacionadas con episodios, personajes, emociones e interacción entre entidades.
+El objetivo del proyecto es diseñar un pipeline **ELT escalable**, orientado a analítica, que permita generar métricas sobre episodios, personajes, emociones e interacciones entre entidades.
 
 ---
 
@@ -29,15 +29,16 @@ El pipeline sigue una arquitectura Medallion claramente definida:
 
 ## Estructura de Directorios
 
+```text
 models/
-├── staging/ # Normalización de datos RAW
-├── intermediate/ # Transformaciones e ingestas incrementales
-└── marts/ # Dimensiones y tablas de hechos
-snapshots/ # Control de cambios (SCD2)
-seeds/ # Datos de referencia
-macros/ # Macros reutilizables
-tests/ # Tests personalizados
-
+ ├── staging/        # Normalización de datos RAW
+ ├── intermediate/   # Transformaciones e ingestas incrementales
+ └── marts/          # Dimensiones y tablas de hechos
+snapshots/           # Control de cambios (SCD2)
+seeds/               # Datos de referencia
+macros/              # Macros reutilizables
+tests/               # Tests personalizados
+```
 ---
 
 ## Modelado Analítico
@@ -48,6 +49,8 @@ tests/ # Tests personalizados
 - `DIM_CHARACTER`
 - `DIM_SCENE`
 - `DIM_EMOTION`
+
+---
 
 ### Tablas de Hechos
 - `FCT_EPISODE_PERFORMANCE`  
@@ -76,7 +79,34 @@ dbt run
 
 # Ejecutar tests
 dbt test
+```
+---
 
+## Configuración del entorno
+
+El proyecto utiliza variables de entorno para adaptar los nombres de base de datos según el entorno de ejecución:
 
 +database: "{{ env_var('DBT_ENVIRONMENT') }}_SILVER"
 +database: "{{ env_var('DBT_ENVIRONMENT') }}_GOLD"
+
+---
+
+## Casos de Uso Analíticos
+
+- Ranking de episodios por audiencia, votos y puntuación.
+- Evaluación del rendimiento de directores.
+- Análisis de emociones por personaje y escena.
+- Evolución temporal de ratings y popularidad.
+
+---
+
+## Estado del Proyecto
+
+- Pipeline ELT funcional y documentado.
+- Modelado dimensional preparado para consumo BI.
+- Tests de calidad implementados.
+- Arquitectura diseñada para escalar con nuevos datasets.
+
+---
+Autor: Alejandro Martínez Jiménez
+Stack: dbt · Snowflake · SQL · Jinja2
