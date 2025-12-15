@@ -1,113 +1,112 @@
-# Friends Analytics Project
+# Friends Analytics · Data Engineering Project
 
-Este proyecto utiliza **dbt**, **Snowflake** y una arquitectura en capas Medallion (Bronze → Silver → Gold) para analizar datos de la serie *Friends*, 
-permitiendo la exploración de emociones, interacciones, rendimiento de episodios, y métricas por director.
+Proyecto de **Data Engineering** construido con **dbt** y **Snowflake**, siguiendo una arquitectura en capas **Medallion (Bronze → Silver → Gold)** para la explotación analítica de datos de la serie *Friends*.
 
----
-
-## Estructura del Proyecto
-
-* `models/`
-
-  * `staging/`: Modelos STG de datos RAW normalizados.
-  * `intermediate/`: Modelos incrementales (ej. ingestas).
-  * `marts/`: Dimensiones y tablas de hechos (modelo en estrella).
-* `snapshots/`: Snapshots con control de cambios (SCD2).
-* `seeds/`: Datos de referencia (ej. `DIM_DYNAMICS_MAPPING`).
-* `macros/`: Macros reutilizables (`calcular_ranking()`).
-* `tests/`: Pruebas personalizadas.
+El objetivo del proyecto es diseñar un pipeline **ELT escalable**, orientado a analítica, que permita generar métricas sobre episodios, personajes, emociones e interacciones entre entidades.
 
 ---
 
-## Arquitectura de Capas
+## Arquitectura del Proyecto
+
+El pipeline sigue una arquitectura Medallion claramente definida:
 
 ### Bronze
-
-* Datos RAW cargados a Snowflake desde el dataset de *Friends*.
+- Ingesta de datos RAW del dataset de *Friends* en Snowflake.
+- Conservación de los datos originales sin transformaciones.
 
 ### Silver
+- Normalización y limpieza de datos mediante modelos **staging**.
+- Generación de identificadores MD5.
+- Tipado explícito de columnas y gestión de valores nulos.
+- Implementación de **snapshots SCD Type 2** para control de cambios.
+- Modelos incrementales para optimizar la carga de datos.
 
-* Modelos STG limpios con IDs MD5, tipos explícitos y nulos gestionados.
-* Snapshots con estrategia CHECK (`episode_meta_snapshot`).
-* Modelo incremental: `INT_EPISODE_PERFORMANCE`.
-
-### Gold (Marts)
-
-* Modelo en estrella con:
-
-  * `DIM_EPISODE`
-  * `DIM_DIRECTOR`
-  * `DIM_CHARACTER`, `DIM_SCENE`, `DIM_EMOTION`
-  * `FCT_EPISODE_PERFORMANCE`: Desempeño por episodio.
-  * `FCT_EMOTIONS`: Emociones por personaje y escena.
+### Gold (Analytics / Marts)
+- Modelado dimensional en **esquema en estrella**.
+- Tablas de hechos y dimensiones preparadas para consumo analítico y BI.
 
 ---
 
-## Uso del Proyecto
+## Estructura de Directorios
+
+```text
+models/
+ ├── staging/        # Normalización de datos RAW
+ ├── intermediate/   # Transformaciones e ingestas incrementales
+ └── marts/          # Dimensiones y tablas de hechos
+snapshots/           # Control de cambios (SCD2)
+seeds/               # Datos de referencia
+macros/              # Macros reutilizables
+tests/               # Tests personalizados
+```
+---
+
+## Modelado Analítico
+
+### Dimensiones
+- `DIM_EPISODE`
+- `DIM_DIRECTOR`
+- `DIM_CHARACTER`
+- `DIM_SCENE`
+- `DIM_EMOTION`
+
+---
+
+### Tablas de Hechos
+- `FCT_EPISODE_PERFORMANCE`  
+  Métricas de rendimiento por episodio (audiencia, votos, rating).
+- `FCT_EMOTIONS`  
+  Emociones detectadas por personaje y escena.
+
+---
+
+## Calidad de Datos y Testing
+
+El proyecto incorpora validaciones automáticas mediante **dbt tests**:
+
+- Tests `not_null` y `unique` en claves primarias.
+- Tests de integridad referencial entre hechos y dimensiones.
+- Tests SQL personalizados para validación de reglas de negocio.
+- Documentación completa mediante `schema.yml`.
+
+---
+
+## Ejecución del Proyecto
 
 ```bash
-# Correr todos los modelos
-$ dbt run
+# Ejecutar modelos
+dbt run
 
-# Ejecutar todos los tests
-$ dbt test
+# Ejecutar tests
+dbt test
 ```
-
 ---
 
-## Variables y Configuración
+## Configuración del entorno
 
-Se emplean variables de entorno para adaptar los nombres de base de datos según el entorno:
+El proyecto utiliza variables de entorno para adaptar los nombres de base de datos según el entorno de ejecución:
 
-```yaml
-+database: "{{ env_var('DBT_ENVIRONMENTS') }}_SILVER"
++database: "{{ env_var('DBT_ENVIRONMENT') }}_SILVER"
 +database: "{{ env_var('DBT_ENVIRONMENT') }}_GOLD"
-```
 
 ---
 
-## Tests Incluidos
+## Casos de Uso Analíticos
 
-* `not_null` y `unique` para claves primarias.
-* Integridad entre tablas (tests SQL personalizados).
-* Validación de columnas relevantes (`title`, `year`, `duration`, etc.).
-
----
-
-## Métricas y Casos de Uso
-
-* Rankings de episodios según vistas, votos y puntuación.
-* Evaluación de directores por desempeño de sus episodios.
-* Emociones detectadas por escena, personaje y línea.
-* Evolución temporal de calificaciones y audiencia.
+- Ranking de episodios por audiencia, votos y puntuación.
+- Evaluación del rendimiento de directores.
+- Análisis de emociones por personaje y escena.
+- Evolución temporal de ratings y popularidad.
 
 ---
 
-## Consideraciones Finales
+## Estado del Proyecto
 
-* Modelo 100% documentado (`schema.yml`).
-* Datos limpios, testeados y modelados.
-* Listo para ser explotado por BI/SQL o visualizado con herramientas analíticas.
-
----
-
-## Defensa del Proyecto
-
-- Arquitectura modular y escalable
-- Snapshot y modelo incremental funcionales
-- Esquema en estrella bien diseñado
-- Documentación y tests implementados
-- Casos de uso analíticos bien definidos
+- Pipeline ELT funcional y documentado.
+- Modelado dimensional preparado para consumo BI.
+- Tests de calidad implementados.
+- Arquitectura diseñada para escalar con nuevos datasets.
 
 ---
-
-**Autor**: Alejandro Martínez Jiménez
-**Tecnologías**: dbt Cloud (Free), Snowflake, Jinja2, SQL
-
-
-### Resources:
-- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
-- Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
-- Join the [chat](https://community.getdbt.com/) on Slack for live discussions and support
-- Find [dbt events](https://events.getdbt.com) near you
-- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
+Autor: Alejandro Martínez Jiménez
+Stack: dbt · Snowflake · SQL · Jinja2
